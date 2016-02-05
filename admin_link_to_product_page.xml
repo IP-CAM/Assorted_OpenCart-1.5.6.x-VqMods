@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+	<id>Admin Link to Product Page</id>
+	<version>1.0.0</version>
+	<vqmver>2.4.0</vqmver>
+	<author>Nikita Solovyev</author>
+
+	<file name="admin/view/template/catalog/product_form.tpl">
+		<operation>
+			<search position="ibefore"><![CDATA[
+				<a onclick="$('#form').submit();" class="button"><?php echo $button_save; ?></a>
+				]]></search>
+			<add><![CDATA[
+				<?php if (isset($this->request->get['product_id'])) { ?>
+				<a class="button" href="<?php echo substr(HTTP_SERVER,0,-6); ?>index.php?route=product/product&product_id=<?php echo $this->request->get['product_id']; ?>" target="_blank">Product page</a>
+				<?php } ?>
+				]]></add>
+		</operation>
+	</file>
+</modification>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+    <id>Admin Order Auto Copy Fields on Input</id>
+    <version>1.0.0</version>
+    <vqmver>2.4.0</vqmver>
+    <author>Nikita Solovyev</author>
+    <file name="admin/view/template/sale/order_form.tpl">
+        <operation error="log">
+            <search position="before"><![CDATA[<?php echo $footer; ?>]]></search>
+            <add><![CDATA[
+					<script type="text/javascript"><!--
+
+					$(document).ready(function() {
+							
+						function focusout_handler_input(copy_from_name, copy_to_name) {
+							if ($("input[name="+copy_to_name+"]").val() == ''){
+								$("input[name="+copy_to_name+"]").val($("input[name="+copy_from_name+"]").val());
+							}
+						}
+
+						function change_handler_select(copy_from_name, copy_to_name) {
+								$("select[name="+copy_to_name+"]").val($("select[name="+copy_from_name+"]").val()).change();
+						}
+
+						$("input[name=firstname]").focusout(function(){focusout_handler_input("firstname","payment_firstname")});
+						$("input[name=firstname]").focusout(function(){focusout_handler_input("firstname","shipping_firstname")});
+
+						$("input[name=lastname]").focusout(function(){focusout_handler_input("lastname","payment_lastname")});
+						$("input[name=lastname]").focusout(function(){focusout_handler_input("lastname","shipping_lastname")});
+
+						$("select[name=payment_address]").change(function(){change_handler_select("payment_address","shipping_address")});
+
+						$("select[name=payment_country_id]").change(function(){change_handler_select("payment_country_id","shipping_country_id")});
+
+						$("select[name=payment_zone_id]").change(function(){
+							/*
+							if ($("select[name=payment_zone_id]").val() == '2761' && $("input[name=payment_city]").val() == '') {
+								$("input[name=payment_city]").val('Москва');
+							}
+							*/
+							change_handler_select("payment_zone_id","shipping_zone_id")
+						});
+						
+						$("input[name=payment_city]").focusout(function(){
+							/*
+							if ($("input[name=payment_city]").val() == 'Москва' && $("select[name=payment_zone_id]").val() == '') {
+								$("select[name=payment_zone_id]").val('2761').change();
+							}
+							*/
+							focusout_handler_input("payment_city","shipping_city")
+						});
+						
+						/*
+						$("select[name=shipping_zone_id]").change(function(){
+							if ($("select[name=shipping_zone_id]").val() == '2761' && $("input[name=shipping_city]").val() == '') {
+								$("input[name=shipping_city]").val('Москва');
+							}
+						});
+						
+						$("input[name=shipping_city]").focusout(function(){
+							if ($("input[name=shipping_city]").val() == 'Москва' && $("select[name=shipping_zone_id]").val() == '') {
+								$("select[name=shipping_zone_id]").val('2761').change();
+							}
+						});
+						*/
+						
+						$("input[name=payment_address_1]").focusout(function(){focusout_handler_input("payment_address_1","shipping_address_1")});
+
+						$("input[name=payment_address_2]").focusout(function(){focusout_handler_input("payment_address_2","shipping_address_2")});
+
+						$("input[name=payment_postcode]").focusout(function(){focusout_handler_input("payment_postcode","shipping_postcode")});
+
+						$("input[name=payment_company]").focusout(function(){focusout_handler_input("payment_company","shipping_company")});
+						
+						/*
+						$("select[name=payment_country_id]").val('176').change();
+						*/
+
+					});
+
+					//--></script>
+				]]></add>
+        </operation>
+    </file>
+
+</modification>

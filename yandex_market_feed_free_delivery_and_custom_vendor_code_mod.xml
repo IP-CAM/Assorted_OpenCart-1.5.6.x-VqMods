@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+    <id>Yandex.Market Feed Free Delivery and Custom Vendor Code Mod</id>
+    <version>1.0.0</version>
+    <vqmver>2.4.0</vqmver>
+    <author>Nikita Solovyev</author>
+	<!-- START Modify the following block in file itself if using cron -->
+    <file name="catalog/controller/feed/yandex_yml.php">
+        <operation>
+			<search position="after"><![CDATA[
+					$export_delivery_cost = true;
+				]]>
+			</search>
+            <add><![CDATA[
+					if ($this->config->get('yandex_yml_free_delivery_threshold') != '') {
+						$free_delivery_threshold = intval($this->config->get('yandex_yml_free_delivery_threshold'));
+					}
+				]]>
+			</add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[
+						$data['local_delivery_cost'] = $local_delivery_cost;
+				]]>
+			</search>
+            <add><![CDATA[
+					if (isset($free_delivery_threshold)) {
+						if ($data['price'] >= $free_delivery_threshold) {
+							$data['local_delivery_cost'] = 0;
+						}
+						else {
+							$data['local_delivery_cost'] = $local_delivery_cost;
+						}
+					}
+					else {
+						$data['local_delivery_cost'] = $local_delivery_cost;
+					}
+				]]>
+			</add>
+		</operation>
+    </file>
+	<!-- END modification -->
+	<file name="admin/view/template/feed/yandex_yml.tpl">
+        <operation>
+			<search position="after" offset="1"><![CDATA[
+				<td><input type="text" name="yandex_yml_delivery_cost" value="<?php echo $yandex_yml_delivery_cost; ?>"  size="4" /></td>
+				]]>
+			</search>
+            <add><![CDATA[
+				<tr>
+					<td><?php echo $entry_free_delivery_threshold; ?></td>
+					<td><input type="text" name="yandex_yml_free_delivery_threshold" value="<?php echo $yandex_yml_free_delivery_threshold; ?>"  size="10" /></td>
+				</tr>
+				]]>
+			</add>
+		</operation>
+    </file>
+	<file name="admin/controller/feed/yandex_yml.php">
+        <operation>
+			<search position="before"><![CDATA[
+				if (isset($this->request->post['yandex_yml_delivery_cost'])) {
+				]]>
+			</search>
+            <add><![CDATA[
+				if (isset($this->request->post['yandex_yml_free_delivery_threshold'])) {
+					$this->data['yandex_yml_free_delivery_threshold'] = $this->request->post['yandex_yml_free_delivery_threshold'];
+				} else {
+					$this->data['yandex_yml_free_delivery_threshold'] = $this->config->get('yandex_yml_free_delivery_threshold');
+				}
+				]]>
+			</add>
+		</operation>
+		<operation>
+			<search position="after"><![CDATA[
+				$this->data['entry_delivery_cost'] = $this->language->get('entry_delivery_cost');
+				]]>
+			</search>
+            <add><![CDATA[
+				$this->data['entry_free_delivery_threshold'] = $this->language->get('entry_free_delivery_threshold');
+				]]>
+			</add>
+		</operation>
+    </file>
+	<file name="admin/language/russian/feed/yandex_yml.php">
+        <operation>
+			<search position="after"><![CDATA[
+				$_['entry_delivery_cost']
+				]]>
+			</search>
+            <add><![CDATA[
+				$_['entry_free_delivery_threshold'] = 'Мин. стоимость товара для бесплатной доставки:<br/><span class="help">Используется, если указано значение тэга local_delivery_cost. При стоимости экспортируемого товара большей, либо равной, значению данного параметра, заданное значение local_delivery_cost в экспорте заменяется на "0" для такого товара.</span>';
+				]]>
+			</add>
+		</operation>
+    </file>
+	<file name="admin/language/english/feed/yandex_yml.php">
+        <operation>
+			<search position="after"><![CDATA[
+				$_['entry_delivery_cost']
+				]]>
+			</search>
+            <add><![CDATA[
+				$_['entry_free_delivery_threshold'] = 'Min. product price threshold for free delivery:<br/><span class="help">Works only when local_delivery_cost tag is set. If the price of the product that is beeing exported is equal or more than this parameter, then the specified value of local_delivery_cost is changed to "0" for the product.</span>';
+				]]>
+			</add>
+		</operation>
+    </file>
+	
+	
+<!-- Custom vendorCode field START -->	
+		<file name="admin/view/template/feed/yandex_yml.tpl">
+		<operation>
+			<search position="after"><![CDATA[
+				<td><select name="yandex_yml_vendorcode_field">
+				]]>
+			</search>
+            <add><![CDATA[
+				<?php
+					$attr_group_id = -1;
+					foreach ($attributes as $key=>$attribute) {
+						if ($attr_group_id != $attribute['attribute_group_id']) {
+							echo '<optgroup label="'.$attribute['attribute_group'].'">';
+							$attr_group_id = $attribute['attribute_group_id'];
+						}
+						echo '<option value="'.$attribute['attribute_id'].'"'.($yandex_yml_vendorcode_field == $attribute['attribute_id'] ? ' selected="selected"' : '').'>'.$attribute['name'].'</option>';
+						if (!isset($attributes[$key+1]) || ($attr_group_id != $attributes[$key+1]['attribute_group_id'])) {
+							echo '</optgroup>';
+						}
+					}
+				?>
+				]]>
+			</add>
+		</operation>
+    </file>
+
+    <file name="catalog/controller/feed/yandex_yml.php">
+		<operation>
+			<search position="replace"><![CDATA[
+					$data['vendorCode'] = $this->config->get($this->CONFIG_PREFIX.'vendorcode_field') ? $product[$this->config->get($this->CONFIG_PREFIX.'vendorcode_field')] : $product['model'];
+				]]>
+			</search>
+            <add><![CDATA[
+				$attributes = $this->model_export_yandex_yml->getProductAttributes($product['product_id']);
+				if ($this->config->get($this->CONFIG_PREFIX.'vendorcode_field')) {
+					if (is_numeric($this->config->get($this->CONFIG_PREFIX.'vendorcode_field')) && count($attributes) > 0) {
+						foreach ($attributes as $attr) {
+							if ($attr['attribute_id'] == $this->config->get($this->CONFIG_PREFIX.'vendorcode_field')) {
+								$data['vendorCode'] = $attr['text'];
+							}
+						}
+					}
+					else {
+						$data['vendorCode'] = $product[$this->config->get($this->CONFIG_PREFIX.'vendorcode_field')];
+					}
+				}
+				else {
+					$data['vendorCode'] = $product['model'];	
+				}
+			]]>
+			</add>
+		</operation>
+    </file>
+<!-- Custom vendorCode field END -->
+</modification>

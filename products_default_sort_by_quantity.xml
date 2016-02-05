@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+    <id>Products Default Sort by Quantity</id>
+    <version>1.0.0</version>
+    <vqmver>2.4.0</vqmver>
+    <author>Nikita Solovyev</author>
+	<file name="catalog/controller/product/manufacturer.php">
+		<operation>
+			<search position="replace" index="1"><![CDATA[$sort = 'p.sort_order';]]></search>
+			<add><![CDATA[$sort = 'p.quantity';]]></add>
+		</operation>
+		<operation>
+			<search position="replace" index="1"><![CDATA[$order = 'ASC';]]></search>
+			<add><![CDATA[$order = 'DESC';]]></add>
+		</operation>
+	</file>
+	<file name="catalog/controller/product/search.php">
+		<operation>
+			<search position="replace" index="1"><![CDATA[$sort = 'p.sort_order';]]></search>
+			<add><![CDATA[$sort = 'p.quantity';]]></add>
+		</operation>
+		<operation>
+			<search position="replace" index="1"><![CDATA[$order = 'ASC';]]></search>
+			<add><![CDATA[$order = 'DESC';]]></add>
+		</operation>
+	</file>
+	<file name="catalog/controller/product/special.php">
+		<operation>
+			<search position="replace" index="1"><![CDATA[$sort = 'p.sort_order';]]></search>
+			<add><![CDATA[$sort = 'p.quantity';]]></add>
+		</operation>
+		<operation>
+			<search position="replace" index="1"><![CDATA[$order = 'ASC';]]></search>
+			<add><![CDATA[$order = 'DESC';]]></add>
+		</operation>
+	</file>
+	<file name="catalog/controller/product/category.php">
+		<operation>
+			<search position="replace" index="1"><![CDATA[$sort = 'p.sort_order';]]></search>
+			<add><![CDATA[$sort = 'p.quantity';]]></add>
+		</operation>
+		<operation>
+			<search position="replace" index="1"><![CDATA[$order = 'ASC';]]></search>
+			<add><![CDATA[$order = 'DESC';]]></add>
+		</operation>
+	</file>
+</modification>

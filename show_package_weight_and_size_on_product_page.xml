@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+    <id>Show Package Weight and Size on Product Page</id>
+    <version>1.0.0</version>
+    <vqmver>2.4.0</vqmver>
+    <author>Nikita Solovyev (inspired by sergius_sv attributes mod)</author>
+	<file name="catalog/language/english/product/product.php">
+        <operation>
+			<search position="after"><![CDATA[$_['text_manufacturer']]]></search> 
+			<add><![CDATA[
+				$_['package_size_name']	= 'Size'; //Attribute size name
+				$_['package_size_value']	= '%d x %d x %d %s'; //'%01.1f x %01.1f x %01.1f %s';//w x l x h cl]
+				$_['package_weight_name']	= 'Wieght'; //Attribute weight name
+				$_['package_weight_value']= '%01.2f %s.'; //w cl
+			]]></add>
+        </operation>
+	</file>
+
+    <file name="catalog/language/russian/product/product.php">
+        <operation>
+			<search position="after"><![CDATA[$_['text_manufacturer']]]></search> 
+			<add><![CDATA[
+				$_['package_size_name']	= 'Размер упаковки:';
+				$_['package_size_value']	= '%01.1fx%01.1fx%01.1f%s'; //'%d x %d x %d %s';//w x l x h cl]
+				$_['package_weight_name']	= 'Вес упаковки:';
+				$_['package_weight_value']= '%01.2f%s'; //w cl
+			]]></add>
+        </operation>
+	</file>	
+	
+	<file name="catalog/controller/product/product.php">
+		<operation>
+			<search position="after"><![CDATA[$product_info = $this->model_catalog_product->getProduct($product_id);]]></search>
+			<add><![CDATA[
+				$this->data['package_size_name'] = $this->language->get('package_size_name');
+				$this->data['package_weight_name'] = $this->language->get('package_weight_name');
+				
+				$this->data['package_size_value'] = sprintf($this->language->get('package_size_value'), $product_info['length'], $product_info['width'], $product_info['height'], $this->length->getUnit($product_info['length_class_id']));
+				$this->data['package_weight_value'] = sprintf($this->language->get('package_weight_value'), $product_info['weight'], $this->weight->getUnit($product_info['weight_class_id']));
+			]]></add>
+		</operation>
+	</file>
+
+	<file name="catalog/view/theme/*/template/product/product.tpl">
+		<operation>
+			<search position="after" offset="1"><![CDATA[<span><?php echo $text_reward; ?></span> <?php echo $reward; ?>]]></search>
+			<add><![CDATA[
+			<?php if( $package_size_value ): ?>
+				<div><span><?php echo $package_size_name; ?>&nbsp;</span><?php echo $package_size_value; ?></div>
+			<?php endif; ?>
+			<?php if( $package_weight_value ): ?>
+				<div><span><?php echo $package_weight_name; ?>&nbsp;</span><?php echo $package_weight_value; ?></div>
+			<?php endif; ?>
+			]]></add>
+		</operation>
+	</file>
+</modification>

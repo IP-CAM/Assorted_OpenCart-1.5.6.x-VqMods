@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+    <id>Spoiler Mod for FilterPro</id>
+    <version>1.0.0</version>
+    <vqmver>2.4.0</vqmver>
+    <author>Nikita Solovyev</author>
+    <file name="catalog/view/theme/*/template/module/filterpro.tpl">
+        <operation>
+			<search position="replace"><![CDATA[
+					<div class="price_slider collapsible">
+				]]>
+			</search>
+            <add><![CDATA[
+					<div class="price_slider">
+				]]>
+			</add>
+		</operation>
+		<operation>
+            <search position="before" index="2"><![CDATA[
+					<script type="text/javascript">
+				]]>
+			</search>
+            <add><![CDATA[
+				<script type="text/javascript"><!--
+					$(document).ready(function() {
+						if ($('#box_content_filterpro').height() > 200)  {
+							$('#box_content_filterpro').animate({height: '120px'}, 600);
+							$('#box_content_filterpro').after('<div id="lbl_fltr_expand" class="fltr_cut_line"><button class="expand_hide_fltr" type="button" id="expand_fltr"><span class="">Show all filters</span></button></div>');
+							$('#box_content_filterpro').after('<div id="lbl_fltr_hide" class="fltr_cut_line" style="display:none;"><button class="expand_hide_fltr" type="button" id="hide_fltr"><span class="">Hide filters</span></button></div>');
+						};
+							$('#expand_fltr').live('click',function(){
+										$('#lbl_fltr_expand').css("display", "none");
+										$('#box_content_filterpro').animate({height: '100%'}, 600);
+										$('#lbl_fltr_hide').css("display", "block");
+							});
+							$('#hide_fltr').live('click',function(){
+										$('#lbl_fltr_hide').css("display", "none");
+										$('#box_content_filterpro').animate({height: '120px'}, 600);
+										$('#lbl_fltr_expand').css("display", "block");
+							});
+					});
+					//-->
+				</script>
+				<style type="text/css">
+				#box_content_filterpro
+				{
+					overflow: hidden;
+				}
+				.fltr_cut_line
+				{
+					width: 100%;
+					text-align: center;
+					border-bottom: 1px solid #EAEAEA;
+					height: 11px;
+					margin: 0 auto;
+					margin-top: 10px;
+					margin-bottom: 30px;
+				}
+				.expand_hide_fltr
+				{
+					height: 20px;
+					font-size: 14px;
+					color: #FFFFFF;
+					padding: 0 10px;
+					border: 1px solid #EAEAEA;
+					outline: 0;
+					font-weight: normal;
+					white-space: nowrap;
+					word-wrap: normal;
+					vertical-align: middle;
+					cursor: pointer;
+					-moz-border-radius: 2px;
+					-webkit-border-radius: 2px;
+					border-radius: 2px;
+					background: #0599D3;
+				}
+
+				.expand_hide_fltr:hover
+				{
+					color: #FFFFFF;
+					background: #5EBAE7;
+				}
+				</style>
+			]]></add>
+        </operation>
+    </file>
+</modification>
